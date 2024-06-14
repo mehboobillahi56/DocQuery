@@ -1,3 +1,5 @@
+
+
 ## if 1st time uncomment below installation 
 # !pip install -U sentence-transformers
 # !pip install langchain openai python-dotenv
@@ -10,30 +12,14 @@
 
 
 
-from fastapi import FastAPI, UploadFile, File
-import uvicorn
 from utils import *
-app =  FastAPI()
 
 my_utilities = MyUtilityFunctions()
 
 
-@app.post("/store_text_embeddings")
-async def process_text_embeddings(doc: UploadFile = File(...)):
+def process_text_embeddings(file_location):
     try:
-        # Read the content of the uploaded file
-        print(doc.filename)
-
-        file_location = f"temp/{doc.filename}"
-        
-        # Create temp directory if it does not exist
-        os.makedirs(os.path.dirname(file_location), exist_ok=True)
-        
-        # Save the file to the temp directory
-        with open(file_location, "wb+") as file_object:
-            file_object.write(doc.file.read())
-        
-        
+       
         if file_location.endswith('.txt'):
             documents = my_utilities.extract_text_from_txt(file_location)
         else:
@@ -64,8 +50,7 @@ async def process_text_embeddings(doc: UploadFile = File(...)):
         return {"error": f"An error occurred: {e}"}
 
 
-@app.get("/text_matching")
-async def chat(text: str):
+def chat(text):
     try:
         # Connect to the database
         dbconnection = my_utilities.connect_db()
@@ -87,8 +72,7 @@ async def chat(text: str):
     except Exception as e:
         return {"error": f"An error occurred: {e}"}
 
-@app.get("/clear_data")
-async def clear_db():
+def clear_db():
     try:
         # Connect to the database
         dbconnection = my_utilities.connect_db()
@@ -106,4 +90,4 @@ async def clear_db():
     
     
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    process_text_embeddings('/home/illahi/linux-projects/genai_projects/Pdf-Txt-Encoder/AttentionIsAllYouNeed.pdf')
