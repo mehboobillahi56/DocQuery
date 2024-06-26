@@ -65,6 +65,23 @@ Follow these steps to set up the Pdf-Txt-Encoder on your machine:
 
 ## Usage
 
+### Download and Install the LLM Model
+
+1. **Install Ollama**: Download and install Ollama on your platform by visiting the following link:
+   ```
+   https://ollama.com/download
+   ```
+
+2. **Pull and Run the LLM Model**: Use the following command to pull and run the Mistral model:
+   ```bash
+   ollama run mistral:7b-instruct-q4_K_M
+   ```
+
+3. **Verify the LLM Model**: To ensure the model is downloaded and running correctly, execute:
+   ```bash
+   python mistral-7b.py
+   ```
+
 To use the Pdf-Txt-Encoder:
 1. Launch the application:
    ```sh
