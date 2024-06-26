@@ -1,0 +1,5 @@
+# Ignore specific files
+/home/illahi/linux-projects/genai_projects/Pdf-Txt-Encoder/langchain_pgvector.ipynb
+/home/illahi/linux-projects/genai_projects/Pdf-Txt-Encoder/run.py
+/home/illahi/linux-projects/genai_projects/Pdf-Txt-Encoder/custom_pdf_reder.ipynb
+/home/illahi/linux-projects/genai_projects/Pdf-Txt-Encoder/.env

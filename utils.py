@@ -1,6 +1,4 @@
 from sentence_transformers import SentenceTransformer
-from langchain.document_loaders import TextLoader, PyPDFLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
 import psycopg2
 from dotenv import load_dotenv
 import os
@@ -84,13 +82,6 @@ class MyUtilityFunctions:
             start = start + chunk_size - overlap_size
         return chunks
     
-    # def load_text(self, documents):
-    #     # documents = loader.load()  # if txt file
-    #     text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=20)
-    #     texts = text_splitter.split_documents(documents)
-
-    #     return texts
-
 
     def prompt_to_llm(self,database_text,userprompt):
        

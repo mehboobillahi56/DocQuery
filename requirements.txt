@@ -1,0 +1,10 @@
+sentence-transformers
+langchain
+openai
+python-dotenv
+psycopg2-binary
+pgvector
+langchain-community
+fastapi
+uvicorn
+pypdf

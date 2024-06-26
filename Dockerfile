@@ -1,3 +1,4 @@
+# use this cmd to build the image - 'docker build --no-cache -t postgres:pdfencoder .'
 # Use the official PostgreSQL image as a base
 FROM postgres:latest
 
@@ -29,3 +30,4 @@ EXPOSE 5432
 
 # Set the default command to run PostgreSQL
 CMD ["postgres"]
+

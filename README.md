@@ -55,7 +55,7 @@ Follow these steps to set up the Pdf-Txt-Encoder on your machine:
 
 4. Build and run the PostgreSQL setup using Docker:
    ```sh
-   docker-compose build
+   docker build --no-cache -t postgres:pdfencoder .
    docker-compose up -d
    ```
    This will create a PostgreSQL database equipped with the pgvector extension.
