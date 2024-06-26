@@ -97,4 +97,3 @@ To use the DocQuery:
    - Upload PDF or text files and save their contents in the database.
    - Query and chat about the stored documents using provided API endpoints.
 
-This README aims to provide clear instructions and insights into the project, ensuring both novice and experienced users can get started effortlessly.
