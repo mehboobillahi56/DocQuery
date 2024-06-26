@@ -1,6 +1,6 @@
-# Pdf-Txt-Encoder
+# DocQuery
 
-Welcome to the Pdf-Txt-Encoder project, a versatile tool designed to extract and interact with textual content from PDFs and text files. This project initially targets Linux environments but can be adapted for Windows with minor modifications.
+Welcome to the DocQuery project, a versatile tool designed to extract and interact with textual content from PDFs and text files. This project initially targets Linux environments but can be adapted for Windows with minor modifications.
 
 ## Table of Contents
 
@@ -14,7 +14,7 @@ Welcome to the Pdf-Txt-Encoder project, a versatile tool designed to extract and
 
 ## About the Project
 
-The Pdf-Txt-Encoder facilitates deep understanding and interaction with lengthy documents such as lease agreements, academic papers, or extensive reports. By storing these documents in a structured database and allowing real-time querying, this tool offers an innovative approach to document management and analysis.
+The DocQuery facilitates deep understanding and interaction with lengthy documents such as lease agreements, academic papers, or extensive reports. By storing these documents in a structured database and allowing real-time querying, this tool offers an innovative approach to document management and analysis.
 
 ### Built With
 
@@ -36,16 +36,16 @@ Before you begin, ensure you have the following installed:
 
 ### Installation
 
-Follow these steps to set up the Pdf-Txt-Encoder on your machine:
+Follow these steps to set up the DocQuery on your machine:
 1. Clone the repository:
    ```sh
-   git clone https://github.com/mehboobillahi56/Pdf-Txt-Encoder.git
+   git clone https://github.com/mehboobillahi56/DocQuery.git
    ```
    Alternatively, download the ZIP folder and extract it.
 
 2. Navigate to the project directory:
    ```sh
-   cd Pdf-Txt-Encoder
+   cd DocQuery
    ```
 
 3. Install required Python packages:
@@ -82,7 +82,7 @@ Follow these steps to set up the Pdf-Txt-Encoder on your machine:
    python mistral-7b.py
    ```
 
-To use the Pdf-Txt-Encoder:
+To use the DocQuery:
 1. Launch the application:
    ```sh
    python main.py
