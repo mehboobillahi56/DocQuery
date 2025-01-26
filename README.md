@@ -36,31 +36,48 @@ Before you begin, ensure you have the following installed:
 
 ### Installation
 
-Follow these steps to set up the DocQuery on your machine:
-1. Clone the repository:
+You have two options to set up DocQuery:
+Clone the repository:
    ```sh
    git clone https://github.com/mehboobillahi56/DocQuery.git
    ```
    Alternatively, download the ZIP folder and extract it.
 
-2. Navigate to the project directory:
+Navigate to the project directory:
    ```sh
    cd DocQuery
    ```
 
-3. Install required Python packages:
+#### Option 1: Automated Setup (Recommended)
+Simply execute the run script which will handle all setup steps automatically:
+```sh
+chmod +x run.sh
+./run.sh
+```
+This script will:
+- Install all required dependencies
+- Set up Docker containers
+- Initialize the database
+- Download and configure the LLM model
+- Start the application
+
+#### Option 2: Manual Setup
+If you prefer to set up components individually:
+
+
+1. Install required Python packages:
    ```sh
    pip install -r requirements.txt
    ```
 
-4. Build and run the PostgreSQL setup using Docker:
+2. Build and run the PostgreSQL setup using Docker:
    ```sh
    docker build --no-cache -t postgres:pdfencoder .
    docker-compose up -d
    ```
    This will create a PostgreSQL database equipped with the pgvector extension.
 
-5. Initialize the database:
+3. Initialize the database:
    Execute the `create_db_table.ipynb` notebook to set up the necessary tables (`id`, `text`, `embeddings`) in your database.
 
 ## Usage
