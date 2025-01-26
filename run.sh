@@ -56,9 +56,13 @@ python3 create_table.py
 check_status "Database table creation"
 
 # 4. Setup Ollama and run model
-echo "🤖 Installing Ollama..."
-curl -fsSL https://ollama.com/install.sh | sh
-check_status "Ollama installation"
+if ! command -v ollama &> /dev/null; then
+    echo "🤖 Installing Ollama..."
+    curl -fsSL https://ollama.com/install.sh | sh
+    check_status "Ollama installation"
+else
+    echo "✅ Ollama is already installed"
+fi
 
 # Start Ollama service in detached mode
 echo "🔄 Starting Ollama service..."
