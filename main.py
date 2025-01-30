@@ -1,91 +1,123 @@
-## if 1st time uncomment below installation 
-# !pip install -U sentence-transformers
-# !pip install langchain openai python-dotenv
-# !pip install psycopg2-binary pgvector
-# !pip install -U langchain-community
-# !pip install fastapi
-# !pip install uvicorn
-# !pip install pypdf
-
-
-
-
-from fastapi import FastAPI, UploadFile, File
 import uvicorn
-from utils import *
-app =  FastAPI()
+from fastapi import FastAPI, File, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
+import os
+import logging
+from utils import MyUtilityFunctions
 
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+app = FastAPI()
 my_utilities = MyUtilityFunctions()
 
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.post("/store_text_embeddings")
 async def process_text_embeddings(doc: UploadFile = File(...)):
     try:
-        # Read the content of the uploaded file
-        print(doc.filename)
-
+        print("-" * 50)
+        print(f"Received file upload request:")
+        print(f"Filename: {doc.filename}")
+        
+        # Create temp directory if it doesn't exist
+        if not os.path.exists("temp"):
+            os.makedirs("temp")
+        
+        # Save the uploaded file temporarily
         file_location = f"temp/{doc.filename}"
-        
-        # Create temp directory if it does not exist
-        os.makedirs(os.path.dirname(file_location), exist_ok=True)
-        
-        # Save the file to the temp directory
         with open(file_location, "wb+") as file_object:
-            file_object.write(doc.file.read())
+            file_object.write(await doc.read())
+        print(f"Saved file to: {file_location}")
         
+        # Read the text content
+        with open(file_location, "r", encoding="utf-8") as file:
+            text_content = file.read()
+            print(f"File content length: {len(text_content)} characters")
         
-        if file_location.endswith('.txt'):
-            documents = my_utilities.extract_text_from_txt(file_location)
-        else:
-            documents = my_utilities.extract_text_from_pdf(file_location)
-        
- 
-        preprocess = my_utilities.preprocess_text(documents)
-
-        texts = my_utilities.split_text_into_chunks(preprocess, 20, 10)#(text, chunk_size, overlap_size)
         # Connect to database
-        connection = my_utilities.connect_db()
+        dbconnection = my_utilities.connect_db()
         
-        # If connection is successful
-        if connection:
-            # Get embeddings for the loaded text
-            doc_vectors = my_utilities.get_embeddings([t for t in texts], False)
+        if dbconnection:
+            print("Connected to database successfully")
             
-            # Store embeddings in the database
-            my_utilities.store_embeddings(connection, texts, doc_vectors)
+            # Process text and generate embeddings
+            processed_text = my_utilities.preprocess_text(text_content)
+            print(f"Processed text into {len(processed_text)} chunks")
             
-            # Remove temp file after processing
+            chunks, metadata = my_utilities.split_text_into_chunks(processed_text)
+            print(f"Split into {len(chunks)} chunks with metadata")
+            
+            doc_vectors = my_utilities.get_embeddings(chunks)
+            print(f"Generated {len(doc_vectors)} embeddings")
+            
+            # Store in database
+            my_utilities.store_embeddings(dbconnection, chunks, doc_vectors, metadata)
+            print("Stored embeddings in database")
+            
+            # Close database connection
+            dbconnection.close()
+            print("Database connection closed")
+            
+            # Clean up temporary file
             os.remove(file_location)
+            print(f"Temporary file removed: {file_location}")
             
-            return {"message": "Text embeddings completed."}
+            return {"message": "Text embeddings completed successfully"}
         else:
-            return {"error": "Failed to connect to the database."}
+            return {"error": "Failed to connect to the database"}
+            
     except Exception as e:
-        return {"error": f"An error occurred: {e}"}
-
+        print(f"Error: {str(e)}")
+        return {"error": str(e)}
 
 @app.get("/text_matching")
 async def chat(text: str):
     try:
         # Connect to the database
         dbconnection = my_utilities.connect_db()
-        # print(dbconnection)
-        # text = my_utilities.preprocess_text(text)
+        
         if dbconnection:
-            # Get results from the database
-            result = my_utilities.get_resutls(dbconnection,text)
-            print("-"*60)
-            print("Result: ", result)
-            llm_summary = my_utilities.prompt_to_llm(result,text)
-            print("llm_summary: ", llm_summary)
-            print("-"*60)
-            return my_utilities.preprocess_text(llm_summary)
+            # Get results from database
+            results = my_utilities.get_results(dbconnection, text)
             
+            # Close database connection
+            dbconnection.close()
+            
+            # Format results in a more readable way
+            formatted_response = {
+                "query": text,
+                "total_results": len(results),
+                "summary": my_utilities.format_results_summary(text, results),
+                "passages": []
+            }
+            
+            for i, result in enumerate(results, 1):
+                formatted_response["passages"].append({
+                    "rank": i,
+                    "text": result["text"],
+                    "relevance_score": f"{result['similarity']:.2%}",
+                    "metadata": {
+                        "paragraph": f"{result['chunk_start']}",
+                        "is_complete": result["is_complete_para"]
+                    }
+                })
+            
+            return formatted_response
         else:
-            return {"error": "Failed to connect to the database."}
-
+            return {"error": "Failed to connect to the database"}
+            
     except Exception as e:
-        return {"error": f"An error occurred: {e}"}
+        print(f"Error: {str(e)}")
+        return {"error": str(e)}
 
 @app.get("/clear_data")
 async def clear_db():
@@ -95,15 +127,15 @@ async def clear_db():
         print(dbconnection)
         
         if dbconnection:
-            # Get results from the database
-            result = my_utilities.clear_db(dbconnection)
-            
-            return result
+            # Clear data from database
+            message = my_utilities.clear_db(dbconnection)
+            return {"message": message}
         else:
-            return {"error": "Failed to connect to the database."}
+            return {"error": "Failed to connect to the database"}
+            
     except Exception as e:
-        return {"error": f"An error occurred: {e}"}
-    
-    
+        print(f"Error: {str(e)}")
+        return {"error": str(e)}
+
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8080)

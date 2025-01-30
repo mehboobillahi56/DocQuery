@@ -8,3 +8,4 @@ langchain-community
 fastapi
 uvicorn
 pypdf
+psutil>=5.9.0
